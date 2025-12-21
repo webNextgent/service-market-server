@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  phone            String   @unique
+
+  password         String?
+  isVerified       Boolean  @default(false)
+  role             String   @default("USER")
+  otp              String?
+  otpExpires       DateTime?
+  otpAttempts      Int      @default(0)
+  lastOtpSent      DateTime?
+  
+  registeredViaOtp Boolean  @default(false)
+  
+  createdAt        DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([isVerified])
+}
+
+model OTPLog {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  phone      String
+  otp        String
+  purpose    String   // "LOGIN", "REGISTER", "VERIFY"
+  status     String   // "SENT", "VERIFIED", "EXPIRED", "FAILED"
+  attempts   Int      @default(0)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  
+  @@index([phone])
+  @@index([createdAt])
+}
+
+model Service {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  image        String
+  title        String
+  des1         String
+  des2         String
+  des3         String
+  rated        String?
+  totalBooking String?
+  serviceType  ServiceType[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("services")
+}
+
+model ServiceType {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  image        String
+  title        String
+  service      Service        @relation(fields: [serviceId], references: [id])
+  serviceId    String         @db.ObjectId
+  propertyType PropertyType[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@map("service_types")
+}
+
+model PropertyType {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  image         String
+  title         String
+  description   String
+  startFrom     String
+  serviceType   ServiceType    @relation(fields: [serviceTypeId], references: [id])
+  serviceTypeId String         @db.ObjectId
+  propertyItems PropertyItem[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  bookings      Booking[]
+
+  @@map("property_types")
+}
+
+model PropertyItem {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  image          String
+  title          String
+  description    String
+  price          Int
+  serviceCharge  Int          @default(0)
+  vat            Int          @default(0)
+  propertyType   PropertyType @relation(fields: [propertyTypeId], references: [id])
+  propertyTypeId String       @db.ObjectId
+  feature1       String?
+  feature2       String?
+  feature3       String?
+  feature4       String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("property_items")
+}
+
+model Booking {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  serviceName    String
+  date           String
+  time           String
+  address        String
+  offer          String
+  propertyItemid String[]        @db.ObjectId
+  propertyItems  PropertyType  @relation(fields: [propertyItemid], references: [id])
+  paymentMethod  Method?
+  serviceFee     Float
+  discount       Float
+  subTotal       Float
+  vat            Float         @default(0)
+  totalPay       Float
+  status         BookingStatus @default(Upcoming)
+  // userId        String        @db.ObjectId
+  // user          User          @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bookings")
+}
+
+model dateTime {
+  id   String   @id @default(auto()) @map("_id") @db.ObjectId
+  date String
+  time String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model promoCode {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  code String
+  expiryDate String 
+  discount Float
+  createdAt     DateTime       @default(now())
+}
+
+enum BookingStatus {
+  Pending
+  Upcoming
+  Delivered
+  Cancelled
+  Unpaid
+  OnHold
+}
+
+enum Method {
+  Card
+  CashOnDelivery
+}
+
+model address {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Status {
+  CONFIRMED
+  CANCELLED
+}
