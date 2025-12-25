@@ -1,69 +1,101 @@
+import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
 import twilio from "twilio";
 import { envVars } from "../../config/env";
 
+const prisma = new PrismaClient();
 const client = twilio(envVars.TWILIO_ACCOUNT_SID, envVars.TWILIO_AUTH_TOKEN);
 
-type OtpRecord = { otp: string; expiresAt: number; attempts: number };
-const otpStore = new Map<string, OtpRecord>();
-
-function generateOTP(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-function normalizePhone(phone: string): string {
+// Helper
+function normalizePhone(phone: string) {
   let p = phone.trim();
   if (!p.startsWith("+")) p = "+" + p.replace(/^0+/, "");
   return p;
 }
 
-export const otpService = {
-  sendOTP: async (data: { phone: string }) => {
-    const phone = normalizePhone(data.phone);
-    const otp = "rakib";
-    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 mins
+// Send OTP
+const sendOTP = async ({ phone }: { phone: string }) => {
+  const formatted = normalizePhone(phone);
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    otpStore.set(phone, { otp, expiresAt, attempts: 0 });
+  await prisma.oTPLog.create({
+    data: {
+      phone: formatted,
+      otp,
+      status: "SENT",
+      expiresAt,
+      attempts: 0,
+    },
+  });
 
-    if (process.env.TEST_MODE === "true") {
-      console.log(`[TEST_MODE] OTP for ${phone}: ${otp}`);
-      return { success: true, method: "test", otp };
-    }
+  try {
+    const smsMessage = await client.messages.create({
+      to: formatted,
+      body: `Pest-Control Send Your OTP Phone sms: ${otp}. এটি 5 মিনিটের মধ্যে এক্সপায়ার হবে।`,
+      messagingServiceSid: envVars.TWILIO_MESSAGING_SERVICE_SID,
+    });
 
-    try {
-      const message = await client.messages.create({
-        // from: envVars.TWILIO_PHONE_NUMBER,
-        to: phone,
-        body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
-        messagingServiceSid: "MGa339ed902c716fde86c1a281f3c4cffa",
-      });
-      console.log(message);
-      return { success: true, method: "sms", messageId: message.sid };
-    } catch (error: any) {
-      console.error("Twilio SMS error:", error.message);
-      return { success: false, message: error.message };
-    }
-  },
+    const whatsappMessage = await client.messages.create({
+      to: `whatsapp:${formatted}`,
+      from: `whatsapp:${envVars.TWILIO_PHONE_NUMBER}`,
+      body: `Pest-Control Send Your OTP Whatsapp: ${otp}. এটি 5 মিনিটের মধ্যে এক্সপায়ার হবে।`,
+    });
 
-  verifyOTP: (phone: string, otp: string) => {
-    const formatted = normalizePhone(phone);
-    const record = otpStore.get(formatted);
-    if (!record) return { success: false, message: "OTP not found or expired" };
-
-    if (Date.now() > record.expiresAt) {
-      otpStore.delete(formatted);
-      return { success: false, message: "OTP expired" };
-    }
-
-    if (record.otp === otp) {
-      otpStore.delete(formatted);
-      return { success: true, message: "OTP verified successfully" };
-    } else {
-      record.attempts += 1;
-      otpStore.set(formatted, record);
-      return {
-        success: false,
-        message: `Invalid OTP. ${3 - record.attempts} attempts remaining`,
-      };
-    }
-  },
+    console.log(smsMessage);
+    console.log(whatsappMessage);
+    return {
+      success: true,
+      messages: [
+        { method: "sms", messageId: smsMessage.sid },
+        { method: "whatsapp", messageId: whatsappMessage.sid },
+      ],
+    };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
 };
+
+// Verify OTP
+const verifyOTP = async ({ phone, otp }: { phone: string; otp: string }) => {
+  const formatted = normalizePhone(phone);
+
+  // Find latest OTP
+  const record = await prisma.oTPLog.findFirst({
+    where: { phone: formatted, otp },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (!record) return { success: false, message: "Invalid OTP" };
+  if (record.expiresAt < new Date())
+    return { success: false, message: "OTP expired" };
+
+  // Mark OTP as VERIFIED
+  await prisma.oTPLog.delete({
+    where: { id: record.id },
+  });
+
+  // Find or create user
+  let user = await prisma.user.findUnique({ where: { phone: formatted } });
+  if (!user) {
+    user = await prisma.user.create({
+      data: { phone: formatted, isVerified: true, registeredViaOtp: true },
+    });
+  } else if (!user.isVerified) {
+    user = await prisma.user.update({
+      where: { phone: formatted },
+      data: { isVerified: true },
+    });
+  }
+
+  // Generate JWT
+  const token = jwt.sign(
+    { id: user.id, phone: user.phone, role: user.role },
+    envVars.JWT_ACCESS_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  return { success: true, user, token };
+};
+
+export const otpService = { sendOTP, verifyOTP };

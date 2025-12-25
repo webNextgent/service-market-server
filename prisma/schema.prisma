@@ -8,35 +8,34 @@ datasource db {
 }
 
 model User {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  phone            String   @unique
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  phone String @unique
 
-  password         String?
-  isVerified       Boolean  @default(false)
-  role             String   @default("USER")
-  otp              String?
-  otpExpires       DateTime?
-  otpAttempts      Int      @default(0)
-  lastOtpSent      DateTime?
-  
-  registeredViaOtp Boolean  @default(false)
-  
-  createdAt        DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+  isVerified  Boolean   @default(false)
+  role        String    @default("USER")
+  otp         String?
+  otpExpires  DateTime?
+  otpAttempts Int       @default(0)
+  lastOtpSent DateTime?
+
+  registeredViaOtp Boolean @default(false)
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  usePromoCodes usePromoCode[]
+
   @@index([isVerified])
 }
 
 model OTPLog {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  phone      String
-  otp        String
-  purpose    String   // "LOGIN", "REGISTER", "VERIFY"
-  status     String   // "SENT", "VERIFIED", "EXPIRED", "FAILED"
-  attempts   Int      @default(0)
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  phone     String
+  otp       String
+  status    String // "SENT", "VERIFIED", "EXPIRED", "FAILED"
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
   @@index([phone])
   @@index([createdAt])
 }
@@ -113,7 +112,7 @@ model Booking {
   time           String
   address        String
   offer          String
-  propertyItemid String[]        @db.ObjectId
+  propertyItemid String[]      @db.ObjectId
   propertyItems  PropertyType  @relation(fields: [propertyItemid], references: [id])
   paymentMethod  Method?
   serviceFee     Float
@@ -121,6 +120,8 @@ model Booking {
   subTotal       Float
   vat            Float         @default(0)
   totalPay       Float
+  longitude      Float?
+  latitude      Float?
   status         BookingStatus @default(Upcoming)
   // userId        String        @db.ObjectId
   // user          User          @relation(fields: [userId], references: [id])
@@ -141,11 +142,21 @@ model dateTime {
 }
 
 model promoCode {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  code String
-  expiryDate String 
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  code       String
+  expiryDate String
+  discount   Float
+  createdAt  DateTime @default(now())
+}
+
+model usePromoCode {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  code       String
+  userId     String?  @db.ObjectId
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alreadyUse Boolean
   discount Float
-  createdAt     DateTime       @default(now())
+  createdAt  DateTime @default(now())
 }
 
 enum BookingStatus {

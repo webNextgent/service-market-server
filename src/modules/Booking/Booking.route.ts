@@ -9,7 +9,7 @@ const router = Router();
 
 router.post(
   "/create",
-validateRequest(BookingSchema),
+// validateRequest(BookingSchema),
  BookingController.createBooking
 );
 

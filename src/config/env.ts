@@ -15,6 +15,8 @@ interface EnvVars {
   TWILIO_AUTH_TOKEN:string;
   TWILIO_ACCOUNT_SID:string
   TWILIO_VERIFY_SERVICE_SID:string
+  TWILIO_MESSAGING_SERVICE_SID:string
+  TWILIO_WHATSAPP_NUMBER:string
 
 
 }
@@ -33,6 +35,8 @@ const loadEnvVariables = (): EnvVars => {
     "TWILIO_AUTH_TOKEN",
     "TWILIO_PHONE_NUMBER",
     "TWILIO_VERIFY_SERVICE_SID",
+    "TWILIO_MESSAGING_SERVICE_SID",
+    "TWILIO_WHATSAPP_NUMBER",
     
   ];
   requiredVars.forEach((key) => {
@@ -55,6 +59,8 @@ const loadEnvVariables = (): EnvVars => {
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN as string,
     TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER as string,
     TWILIO_VERIFY_SERVICE_SID: process.env.TWILIO_VERIFY_SERVICE_SID as string,
+    TWILIO_MESSAGING_SERVICE_SID: process.env.TWILIO_MESSAGING_SERVICE_SID as string,
+    TWILIO_WHATSAPP_NUMBER: process.env.TWILIO_WHATSAPP_NUMBER as string,
     
   };
 };

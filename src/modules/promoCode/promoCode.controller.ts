@@ -15,6 +15,20 @@ const createPromoCode = catchAsync(async (req, res) => {
   });
 });
 
+const usePromoCodeByUser = catchAsync(async (req, res) => {
+
+  const id = req.params.id as string
+
+  const result = await PromoCodeService.usePromoCodeByUser(id, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "PromoCode used successfully",
+    data: result,
+  });
+});
+
 const getAllPromoCode = catchAsync(async (req: Request, res: Response) => {
   const result = await PromoCodeService.getAllPromoCode();
 
@@ -44,4 +58,5 @@ export const PromoCodeController = {
   createPromoCode,
   getAllPromoCode,
   deletePromoCode,
+  usePromoCodeByUser
 };

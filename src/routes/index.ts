@@ -8,6 +8,7 @@ import { PropertyItemsRoutes } from "../modules/propertyItems/propertyItems.rout
 import { BookingsRoutes } from "../modules/Booking/Booking.route";
 import { DateTimeRoutes } from "../modules/dateTime/date.route";
 import { PromoCodeRoutes } from "../modules/promoCode/promoCode.route";
+import { PaymentRoutes } from "../modules/Payment/payment.route";
 
 
 export const router = Router();
@@ -48,6 +49,10 @@ const modules = [
   {
     path: "/promo-code",
     route: PromoCodeRoutes,
+  },
+  {
+    path: "/payment",
+    route: PaymentRoutes ,
   },
 
 

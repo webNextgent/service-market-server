@@ -10,7 +10,14 @@ router.post(
   PromoCodeController.createPromoCode
 );
 
+
 router.get("/", PromoCodeController.getAllPromoCode);
+
+router.post(
+  "/use-promo-code/:id",
+  PromoCodeController.usePromoCodeByUser
+);
+
 router.delete("/delete/:id", PromoCodeController.deletePromoCode);
 
 export const PromoCodeRoutes = router;

@@ -1,27 +1,51 @@
 import { Request, Response } from "express";
-import { otpService } from "./otp.service";
-import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
+import { otpService } from "./otp.service";
+import { catchAsync } from "../../utils/catchAsync";
 
-export const sendOtpHandler = catchAsync(async (req: Request, res: Response) => {
-  const { phone } = req.body;
-  if (!phone) {
-    res.status(400).json({ success: false, message: "Phone is required" });
-    return;
+export const sendOtpHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const { phone } = req.body;
+
+    if (!phone) {
+      return sendResponse(res, {
+        statusCode: httpStatus.BAD_REQUEST,
+        success: false,
+        message: "Phone is required",
+        data: null,
+      });
+    }
+
+    const result = await otpService.sendOTP({ phone });
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "OTP sent successfully",
+      data: result,
+    });
   }
+);
 
-  const result = await otpService.sendOTP({ phone });
+export const verifyOtpHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const { phone, otp } = req.body;
 
-  if (!result.success) {
-    res.status(500).json({ success: false, message: result.message });
-    return;
+    if (!phone || !otp) {
+      return sendResponse(res, {
+        statusCode: httpStatus.BAD_REQUEST,
+        success: false,
+        message: "Phone and OTP are required",
+        data: null,
+      });
+    }
+    const result = await otpService.verifyOTP({ phone, otp });
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "OTP verified successfully",
+      data: result,
+    });
   }
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "OTP sent successfully",
-    data: result,
-  });
-});
+);
