@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import AppError from "../../helpers/AppError";
+import { tr } from "zod/v4/locales";
 
 const prisma = new PrismaClient();
 
@@ -14,6 +15,9 @@ const getAllBooking = async () => {
   const result = await prisma.booking.findMany({
     orderBy:{
       createdAt:"desc"
+    },
+    include:{
+      propertyItems:true
     }
   });
   return result;

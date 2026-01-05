@@ -73,8 +73,15 @@ const DeletePromoCode = async (id: string) => {
     where: { id },
   });
 
+  await prisma.usePromoCode.deleteMany({
+    where: {
+      code: result.code,
+    },
+  });
+
   return result;
 };
+
 
 export const PromoCodeService = {
   createPromoCode,
