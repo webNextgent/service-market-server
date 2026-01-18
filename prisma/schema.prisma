@@ -8,9 +8,12 @@ datasource db {
 }
 
 model User {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  phone String @unique
-
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  phone String?
+  name String
+  email       String    @unique
+  provider String?
+  password    String?
   isVerified  Boolean   @default(false)
   role        String    @default("USER")
   otp         String?
@@ -118,7 +121,7 @@ model Booking {
   address        String
   offer          String
   propertyItemid String[]       @db.ObjectId
-  propertyItems  PropertyItem[] 
+  propertyItems  PropertyItem[]
   paymentMethod  Method?
   serviceFee     Float
   serviceCharge  Float
