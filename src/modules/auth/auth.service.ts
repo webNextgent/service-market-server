@@ -69,8 +69,8 @@ export const ServicesService = {
 };
 
 const createUser = async (data: any) => {
-  const existing = await prisma.user.findUnique({
-    where: { email: data.phone },
+  const existing = await prisma.user.findFirst({
+    where: { email: data.email },
   });
 
   if (existing) {
@@ -95,7 +95,6 @@ const createUser = async (data: any) => {
     {
       id: user.id,
       email: user.email,
-
       role: user.role,
     },
     envVars.JWT_ACCESS_SECRET,
