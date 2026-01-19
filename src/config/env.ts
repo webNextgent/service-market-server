@@ -17,6 +17,9 @@ interface EnvVars {
   TWILIO_VERIFY_SERVICE_SID:string
   TWILIO_MESSAGING_SERVICE_SID:string
   TWILIO_WHATSAPP_NUMBER:string
+  MYRC_API_KEY:string
+  MYRC_SENDER:string
+  MYRC_API_URL:string
 
 
 }
@@ -37,6 +40,9 @@ const loadEnvVariables = (): EnvVars => {
     "TWILIO_VERIFY_SERVICE_SID",
     "TWILIO_MESSAGING_SERVICE_SID",
     "TWILIO_WHATSAPP_NUMBER",
+    "MYRC_API_KEY",
+    "MYRC_SENDER",
+    "MYRC_API_URL",
     
   ];
   requiredVars.forEach((key) => {
@@ -61,6 +67,9 @@ const loadEnvVariables = (): EnvVars => {
     TWILIO_VERIFY_SERVICE_SID: process.env.TWILIO_VERIFY_SERVICE_SID as string,
     TWILIO_MESSAGING_SERVICE_SID: process.env.TWILIO_MESSAGING_SERVICE_SID as string,
     TWILIO_WHATSAPP_NUMBER: process.env.TWILIO_WHATSAPP_NUMBER as string,
+    MYRC_API_KEY: process.env.MYRC_API_KEY as string,
+    MYRC_SENDER: process.env.MYRC_SENDER as string,
+    MYRC_API_URL: process.env.MYRC_API_URL as string,
     
   };
 };

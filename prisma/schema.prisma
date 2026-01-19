@@ -9,11 +9,7 @@ datasource db {
 
 model User {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  phone String?
-  name String
-  email       String    @unique
-  provider String?
-  password    String?
+  phone String @unique
   isVerified  Boolean   @default(false)
   role        String    @default("USER")
   otp         String?
