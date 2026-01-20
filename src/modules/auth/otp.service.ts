@@ -6,19 +6,32 @@ import { sendWhatsappViaMYRC } from "../../utils/otpFunction";
 
 const prisma = new PrismaClient();
 
-function normalizePhone(phone: string) {
-  return phone.replace(/\D/g, "").replace(/^0+/, "880");
-}
+const generateOTP = (): string => {
+  return Math.floor(1000 + Math.random() * 9000).toString();
+};
 
-// Send OTP
-const sendOTP = async ({ phone }: { phone: string }) => {
-  const formatted = normalizePhone(phone);
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+const createAndSendOTP = async (phone: string) => {
+  const otp = generateOTP();
 
-  await prisma.oTPLog.create({
+  // OTP valid for 30 seconds
+  const expiresAt = new Date(Date.now() + 30 * 1000);
+
+  // ❌ Invalidate previous active OTPs
+  await prisma.oTPLog.updateMany({
+    where: {
+      phone,
+      expiresAt: {
+        gt: new Date(),
+      },
+    },
     data: {
-      phone: formatted,
+      status: "EXPIRED",
+    },
+  });
+
+  const otpLog = await prisma.oTPLog.create({
+    data: {
+      phone,
       otp,
       status: "SENT",
       expiresAt,
@@ -26,10 +39,30 @@ const sendOTP = async ({ phone }: { phone: string }) => {
     },
   });
 
-  const message = `MPC Pest Control OTP: ${otp}
-This code will expire in 5 minutes.`;
+  // Auto delete after 60 sec
+  setTimeout(async () => {
+    try {
+      await prisma.oTPLog.delete({
+        where: { id: otpLog.id },
+      });
+    } catch (error) {
+      // ignore
+    }
+  }, 60 * 1000);
 
-  await sendWhatsappViaMYRC(formatted, message);
+  const message = `MPC Pest Control OTP: ${otp}
+This code will expire in 30 seconds.`;
+
+  await sendWhatsappViaMYRC(phone, message);
+
+  return true;
+};
+
+
+
+// Send OTP
+export const sendOTP = async ({ phone }: { phone: string }) => {
+  await createAndSendOTP(phone);
 
   return {
     success: true,
@@ -37,9 +70,38 @@ This code will expire in 5 minutes.`;
   };
 };
 
+
+export const reSendOTP = async ({ phone }: { phone: string }) => {
+  // ⏱️ Resend cooldown (optional but recommended)
+  const lastOtp = await prisma.oTPLog.findFirst({
+    where: {
+      phone,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  if (lastOtp && Date.now() - lastOtp.createdAt.getTime() < 15 * 1000) {
+    return {
+      success: false,
+      message: "Please wait 15 seconds before resending OTP",
+    };
+  }
+
+  await createAndSendOTP(phone);
+
+  return {
+    success: true,
+    message: "OTP resent successfully",
+  };
+};
+
+
+
 // Verify OTP
 const verifyOTP = async ({ phone, otp }: { phone: string; otp: string }) => {
-  const formatted = normalizePhone(phone);
+  const formatted = phone
 
   const record = await prisma.oTPLog.findFirst({
     where: { phone: formatted, otp },
@@ -53,6 +115,7 @@ const verifyOTP = async ({ phone, otp }: { phone: string; otp: string }) => {
   await prisma.oTPLog.delete({ where: { id: record.id } });
 
   let user = await prisma.user.findUnique({ where: { phone: formatted } });
+
   if (!user) {
     user = await prisma.user.create({
       data: { phone: formatted, isVerified: true, registeredViaOtp: true },
@@ -73,4 +136,4 @@ const verifyOTP = async ({ phone, otp }: { phone: string; otp: string }) => {
   return { success: true, user, token };
 };
 
-export const otpService = { sendOTP, verifyOTP };
+export const otpService = { sendOTP, verifyOTP,reSendOTP };

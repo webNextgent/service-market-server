@@ -28,6 +28,32 @@ export const sendOtpHandler = catchAsync(
   }
 );
 
+export const reSendOtpHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const { phone } = req.body;
+
+    if (!phone) {
+      return sendResponse(res, {
+        statusCode: httpStatus.BAD_REQUEST,
+        success: false,
+        message: "Phone is required",
+        data: null,
+      });
+    }
+
+    const result = await otpService.reSendOTP({ phone });
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "OTP resend successfully",
+      data: result,
+    });
+  }
+);
+
+
+
 export const verifyOtpHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { phone, otp } = req.body;
