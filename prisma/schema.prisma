@@ -84,14 +84,69 @@ model PropertyType {
   @@map("property_types")
 }
 
+// model PropertyItem {
+//   id            String @id @default(auto()) @map("_id") @db.ObjectId
+//   image         String
+//   title         String
+//   description   String
+//   price         Int
+//   serviceCharge Int    @default(0)
+//   vat           Int    @default(0)
+
+//   propertyType   PropertyType @relation(fields: [propertyTypeId], references: [id])
+//   propertyTypeId String       @db.ObjectId
+
+//   feature1 String?
+//   feature2 String?
+//   feature3 String?
+//   feature4 String?
+
+//   bookingId String?  @db.ObjectId
+//   booking   Booking? @relation(fields: [bookingId], references: [id])
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   @@map("property_items")
+// }
+
+// model Booking {
+//   id             String         @id @default(auto()) @map("_id") @db.ObjectId
+//   serviceName    String
+//   date           String
+//   time           String
+//   address        String
+//   offer          String
+//   propertyItemid String[]       @db.ObjectId
+//   propertyItems  PropertyItem[]
+//   paymentMethod  Method?
+//   serviceFee     Float
+//   serviceCharge  Float
+//   cashOnDelivery Float
+//   discount       Float
+//   subTotal       Float
+//   vat            Float          @default(0)
+//   totalPay       Float
+//   longitude      Float?
+//   latitude       Float?
+//   status         BookingStatus  @default(Upcoming)
+//   userId         String         @db.ObjectId
+//   user           User           @relation(fields: [userId], references: [id])
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   @@map("bookings")
+// }
+
 model PropertyItem {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   image         String
   title         String
   description   String
   price         Int
-  serviceCharge Int    @default(0)
-  vat           Int    @default(0)
+  serviceCharge Int      @default(0)
+  vat           Int      @default(0)
 
   propertyType   PropertyType @relation(fields: [propertyTypeId], references: [id])
   propertyTypeId String       @db.ObjectId
@@ -111,14 +166,15 @@ model PropertyItem {
 }
 
 model Booking {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  serviceName    String
-  date           String
-  time           String
-  address        String
-  offer          String
-  propertyItemid String[]       @db.ObjectId
-  propertyItems  PropertyItem[]
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  serviceName   String
+  date          String
+  time          String
+  address       String
+  offer         String
+
+  propertyItems PropertyItem[]   // ✅ relation only
+
   paymentMethod  Method?
   serviceFee     Float
   serviceCharge  Float
@@ -130,14 +186,16 @@ model Booking {
   longitude      Float?
   latitude       Float?
   status         BookingStatus  @default(Upcoming)
-  userId         String         @db.ObjectId
-  user           User           @relation(fields: [userId], references: [id])
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("bookings")
 }
+
 
 model dateTime {
   id   String   @id @default(auto()) @map("_id") @db.ObjectId

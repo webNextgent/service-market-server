@@ -3,41 +3,66 @@ import AppError from "../../helpers/AppError";
 
 const prisma = new PrismaClient();
 
+// const createBooking = async (data: any) => {
+//   const newBooking = await prisma.booking.create({
+//     data,
+//   });
+//   return newBooking;
+// };
+
 const createBooking = async (data: any) => {
-  const newBooking = await prisma.booking.create({
-    data,
+  const { propertyItemIds, ...bookingData } = data;
+
+  return await prisma.$transaction(async (tx) => {
+    const booking = await tx.booking.create({
+      data: bookingData,
+    });
+
+    await tx.propertyItem.updateMany({
+      where: {
+        id: { in: propertyItemIds },
+      },
+      data: {
+        bookingId: booking.id,
+      },
+    });
+
+    return await tx.booking.findUnique({
+      where: { id: booking.id },
+      include: { propertyItems: true },
+    });
   });
-  return newBooking;
 };
+
 
 const getAllBooking = async () => {
   const result = await prisma.booking.findMany({
-    orderBy:{
-      createdAt:"desc"
+    orderBy: {
+      createdAt: "desc",
     },
-    include:{
-      propertyItems:true
-    }
+    include: {
+      propertyItems: true,
+    },
   });
   return result;
 };
 
-const getAllMYBooking = async (id:string) => {
+const getAllMYBooking = async (id: string) => {
   const result = await prisma.booking.findMany({
-    where:{
-      id
+    where: {
+      userId: id,
     },
-    orderBy:{
-      createdAt:"desc"
+    orderBy: {
+      createdAt: "desc",
     },
-    include:{
-      propertyItems:true
-    }
+  include:{
+    propertyItems:true
+  }
   });
   return result;
 };
 
-const getSingleBooking = async (id:string) => {
+const getSingleBooking = async (id: string) => {
   const result = await prisma.booking.findUnique({
     where: {
       id,
@@ -78,5 +103,5 @@ export const BookingServices = {
   DeleteBooking,
   updateBooking,
   updateUserBooking,
-  getAllMYBooking
+  getAllMYBooking,
 };
