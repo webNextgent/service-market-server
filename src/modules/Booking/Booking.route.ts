@@ -13,7 +13,8 @@ router.post(
  BookingController.createBooking
 );
 
-router.get("/", BookingController.getAllBooking);
+router.get("/", auth("ADMIN"), BookingController.getAllBooking);
+router.get("/", auth("USER"), BookingController.getAllMYBooking);
 router.get("/:id", BookingController.getSingleBooking);
 router.patch("/update/:id", BookingController.updateBooking); 
 router.patch("/userBooking/:id", BookingController.updateUserBooking); 

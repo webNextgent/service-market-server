@@ -11,7 +11,7 @@ export const seedSuperAdmin = async (prisma: PrismaClient) => {
       const hashedPassword = await bcrypt.hash("superadmin123", 10);
       await prisma.user.create({
         data: {
-          phone:"01826853371",
+          phone:"+8801826853371",
           role: "ADMIN",
         },
       });

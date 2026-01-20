@@ -10,9 +10,9 @@ router.post('/resend-otp', reSendOtpHandler);
 
 // router.post("/register", AuthController.createUser);
 // router.post("/login", AuthController.loginUser);
-// router.get("/users", auth("ADMIN"), AuthController.AllUsers);
+router.get("/users", auth("ADMIN"), AuthController.AllUsers);
 // router.post("/socialLogin", AuthController.socialLogin);
-// router.patch("/change-role", auth("ADMIN"), AuthController.changeRole);
+router.patch("/change-role", auth("ADMIN"), AuthController.changeRole);
 // router.patch(
 //   "/update/profile",
 //   auth("ADMIN", "USER"),

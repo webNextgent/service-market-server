@@ -3,6 +3,7 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { catchAsync } from "../../utils/catchAsync";
 import { otpService } from "./otp.service";
+import { AuthService } from "./auth.service";
 
 export const sendOtpHandler = catchAsync(
   async (req: Request, res: Response) => {
@@ -134,28 +135,30 @@ export const verifyOtpHandler = catchAsync(
 //   });
 // });
 
-// const changeRole = catchAsync(async (req: Request, res: Response) => {
-//   const userId = req.user?.id as string;
-//   const result = await AuthService.changeRole(userId, req.body);
+const changeRole = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.id as string;
+  const result = await AuthService.changeRole(userId, req.body);
 
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "Role change successful",
-//     data: result,
-//   });
-// });
-// const AllUsers = catchAsync(async (req: Request, res: Response) => {
-//   const result = await AuthService.AllUsers();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Role change successful",
+    data: result,
+  });
+});
 
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "AllUsers get successful",
-//     data: result,
-//   });
-// });
+const AllUsers = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthService.AllUsers();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "AllUsers get successful",
+    data: result,
+  });
+});
 
 export const AuthController = {
-
+changeRole,
+AllUsers
 };

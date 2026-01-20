@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import AppError from "../../helpers/AppError";
-import { tr } from "zod/v4/locales";
 
 const prisma = new PrismaClient();
 
@@ -13,6 +12,21 @@ const createBooking = async (data: any) => {
 
 const getAllBooking = async () => {
   const result = await prisma.booking.findMany({
+    orderBy:{
+      createdAt:"desc"
+    },
+    include:{
+      propertyItems:true
+    }
+  });
+  return result;
+};
+
+const getAllMYBooking = async (id:string) => {
+  const result = await prisma.booking.findMany({
+    where:{
+      id
+    },
     orderBy:{
       createdAt:"desc"
     },
@@ -63,6 +77,6 @@ export const BookingServices = {
   getSingleBooking,
   DeleteBooking,
   updateBooking,
-  updateUserBooking
-  // getAllUserBooking
+  updateUserBooking,
+  getAllMYBooking
 };

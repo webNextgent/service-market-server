@@ -1,10 +1,10 @@
-// import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 // import jwt, { JwtPayload } from "jsonwebtoken";
 // import { envVars } from "../../config/env";
 // import AppError from "../../helpers/AppError";
 // import bcrypt from "bcryptjs";
 
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 // const sendOTP = async (data: any) => {
 //   const newService = await prisma.service.create({
@@ -192,16 +192,16 @@
 //   return result;
 // };
 
-// const changeRole = async (userId: string, payload: any) => {
-//   const result = await prisma.user.update({
-//     where: { id: userId },
-//     data: {
-//       ...(payload.role && { role: payload.role }),
-//     },
-//   });
+const changeRole = async (userId: string, payload: any) => {
+  const result = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      ...(payload.role && { role: payload.role }),
+    },
+  });
 
-//   return result;
-// };
+  return result;
+};
 
 // const changePassword = async (userId: string, payload: any) => {
 //   const { oldPassword, newPassword } = payload;
@@ -244,21 +244,20 @@
 // };
 
 
-// const AllUsers = async () => {
-//   const users = await prisma.user.findMany({});
-
-//   const safeUsers = users.map(({ password, ...rest }) => rest);
-
-//   return safeUsers;
-// };
+const AllUsers = async () => {
+  const users = await prisma.user.findMany({});
 
 
-// export const AuthService = {
+  return users;
+};
+
+
+export const AuthService = {
 //   createUser,
 //   loginUser,
 //   socialLogin,
 //   updateProfile,
 //   changePassword,
-//   changeRole,
-//   AllUsers,
-// };
+  AllUsers,
+  changeRole,
+};
