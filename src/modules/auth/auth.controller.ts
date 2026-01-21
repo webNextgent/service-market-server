@@ -111,29 +111,29 @@ export const verifyOtpHandler = catchAsync(
 //   });
 // });
 
-// const updateProfile = catchAsync(async (req: Request, res: Response) => {
-//   const userId = req.user?.id as string;
-//   const result = await AuthService.updateProfile(userId, req.body);
+const updateProfile = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.id as string;
+  const result = await AuthService.updateProfile(userId, req.body);
 
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "update profile successful",
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "update profile successful",
+    data: result,
+  });
+});
 
-// const changePassword = catchAsync(async (req: Request, res: Response) => {
-//   const userId = req.user?.id as string;
-//   const result = await AuthService.changePassword(userId, req.body);
+const deleteAccount = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.id as string;
+  const result = await AuthService.deleteAccount(userId);
 
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "Login successful",
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Account Deleted successful",
+    data: result,
+  });
+});
 
 const changeRole = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.id as string;
@@ -160,5 +160,7 @@ const AllUsers = catchAsync(async (req: Request, res: Response) => {
 
 export const AuthController = {
 changeRole,
-AllUsers
+AllUsers,
+updateProfile,
+deleteAccount
 };

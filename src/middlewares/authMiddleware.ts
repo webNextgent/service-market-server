@@ -12,18 +12,25 @@ interface CustomJwtPayload extends JwtPayload {
 
 export const auth = (...roles: Role[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization; 
-
-    if (!token) return next(new AppError(401, "Unauthorized access", "No token provided"));
+    const token = req.headers.authorization;
+    console.log(token);
+    if (!token)
+      return next(
+        new AppError(401, "Unauthorized access", "No token provided"),
+      );
 
     try {
-      const decoded = verify(token, envVars.JWT_ACCESS_SECRET) as CustomJwtPayload;
+      const decoded = verify(
+        token,
+        envVars.JWT_ACCESS_SECRET,
+      ) as CustomJwtPayload;
+      console.log(decoded);
 
       if (!roles.includes(decoded.role)) {
         return next(new AppError(403, "Forbidden", "You are not allowed"));
       }
 
-      req.user = decoded; 
+      req.user = decoded;
       next();
     } catch (err) {
       return next(new AppError(401, "Unauthorized access", "Invalid token"));
