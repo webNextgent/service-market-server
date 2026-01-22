@@ -10,7 +10,7 @@ router.post('/resend-otp', reSendOtpHandler);
 
 router.get("/users", auth("ADMIN"), AuthController.AllUsers);
 router.patch("/change-role/:id", auth("ADMIN"), AuthController.changeRole);
-router.delete("/delete-account", auth("ADMIN","USER"), AuthController.deleteAccount);
+router.delete("/delete-account/:id", auth("ADMIN","USER"), AuthController.deleteAccount);
 
 router.patch(
   "/update/profile",

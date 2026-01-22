@@ -2,8 +2,6 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-
-
 const updateProfile = async (userId: string, payload: any) => {
   const result = await prisma.user.update({
     where: { id: userId },
@@ -28,17 +26,22 @@ const deleteAccount = async (userId: string,) => {
 };
 
 const changeRole = async (userId: string, payload: any) => {
-  const result = await prisma.user.update({
-    where: { id: userId },
-    data: {
-      ...(payload.role && { role: payload.role }),
-    },
-  });
+const user = await prisma.user.findUnique({
+  where: { id: userId },
+});
+
+if (!user) {
+  throw new Error("User not found");
+}
+
+const newRole = user.role === "USER" ? "ADMIN" : "USER";
+const result = await prisma.user.update({
+  where: { id: userId },
+  data: { role: newRole },
+});
 
   return result;
 };
-
-
 
 const AllUsers = async () => {
   const users = await prisma.user.findMany({
@@ -51,9 +54,7 @@ const AllUsers = async () => {
 
 
 export const AuthService = {
-//   createUser,
-//   loginUser,
-//   socialLogin,
+
   updateProfile,
   deleteAccount,
   AllUsers,

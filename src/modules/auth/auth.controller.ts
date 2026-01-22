@@ -53,8 +53,6 @@ export const reSendOtpHandler = catchAsync(
   }
 );
 
-
-
 export const verifyOtpHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { phone, otp } = req.body;
@@ -78,39 +76,6 @@ export const verifyOtpHandler = catchAsync(
 );
 
 
-
-// const createUser = catchAsync(async (req: Request, res: Response) => {
-//   const user = await AuthService.createUser(req.body);
-//   sendResponse(res, {
-//     statusCode: httpStatus.CREATED,
-//     success: true,
-//     message: "User created successfully",
-//     data: user,
-//   });
-// });
-
-// const loginUser = catchAsync(async (req: Request, res: Response) => {
-//   const { safeUser, token } = await AuthService.loginUser(req.body);
-
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "Login successful",
-//     data: [safeUser, token],
-//   });
-// });
-
-// const socialLogin = catchAsync(async (req: Request, res: Response) => {
-//   const { safeUser, token } = await AuthService.loginUser(req.body);
-
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "Login successful",
-//     data: [safeUser, token],
-//   });
-// });
-
 const updateProfile = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.id as string;
   const result = await AuthService.updateProfile(userId, req.body);
@@ -124,7 +89,7 @@ const updateProfile = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteAccount = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?.id as string;
+  const userId = req.params?.id as string;
   const result = await AuthService.deleteAccount(userId);
 
   sendResponse(res, {
