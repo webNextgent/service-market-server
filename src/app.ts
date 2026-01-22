@@ -10,7 +10,17 @@ dotenv.config();
 
 const app: Application = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:4000",
+      "http://168.231.122.27:4000",
+      "https://pest-control-eta.vercel.app",
+    ],
+    credentials: true,
+  }),
+);
+
 app.use(cookieParser());
 
 app.use("/api/v1", router);
@@ -33,8 +43,6 @@ app.get("/payment-success", async (req: Request, res: Response) => {
 
   res.send("Payment Failed or Cancelled");
 });
-
-
 
 app.get("/", (req: Request, res: Response) => {
   res.send("service-market start on vps!");

@@ -128,7 +128,7 @@ const verifyOTP = async ({ phone, otp }: { phone: string; otp: string }) => {
   }
 
   const token = jwt.sign(
-    { id: user.id, phone: user.phone, role: user.role },
+    { id: user.id, phone: user.phone, email:user.email, firstName:user.firstName, lastName:user.lastName, role: user.role },
     envVars.JWT_ACCESS_SECRET,
     { expiresIn: "7d" },
   );
