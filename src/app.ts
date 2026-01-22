@@ -13,10 +13,9 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
-      // "http://localhost:4000",
-      // "http://168.231.122.27:4000",
-      // "https://pest-control-eta.vercel.app",
-      "*"
+      "http://localhost:4000",
+      "http://168.231.122.27:4000",
+      "https://pest-control-eta.vercel.app",
     ],
     credentials: true,
   }),
