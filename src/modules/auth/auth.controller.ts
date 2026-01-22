@@ -136,7 +136,7 @@ const deleteAccount = catchAsync(async (req: Request, res: Response) => {
 });
 
 const changeRole = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?.id as string;
+  const userId = req.params?.id as string;
   const result = await AuthService.changeRole(userId, req.body);
 
   sendResponse(res, {
