@@ -58,8 +58,6 @@ This code will expire in 30 seconds.`;
   return true;
 };
 
-
-
 // Send OTP
 export const sendOTP = async ({ phone }: { phone: string }) => {
   await createAndSendOTP(phone);
@@ -69,7 +67,6 @@ export const sendOTP = async ({ phone }: { phone: string }) => {
     message: "OTP sent via WhatsApp",
   };
 };
-
 
 export const reSendOTP = async ({ phone }: { phone: string }) => {
   // ⏱️ Resend cooldown (optional but recommended)
@@ -96,8 +93,6 @@ export const reSendOTP = async ({ phone }: { phone: string }) => {
     message: "OTP resent successfully",
   };
 };
-
-
 
 // Verify OTP
 const verifyOTP = async ({ phone, otp }: { phone: string; otp: string }) => {
