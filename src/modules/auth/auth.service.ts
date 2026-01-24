@@ -44,12 +44,19 @@ const changeRole = async (userId: string, payload: any) => {
 
 const AllUsers = async () => {
   const users = await prisma.user.findMany({
+    where: {
+      role: {
+        not: "SUPER_ADMIN",
+      },
+    },
     orderBy: {
       createdAt: "desc",
     },
   });
+
   return users;
 };
+
 
 export const AuthService = {
   updateProfile,

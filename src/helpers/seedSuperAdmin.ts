@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 export const seedSuperAdmin = async (prisma: PrismaClient) => {
   try {
     const existingAdmin = await prisma.user.findFirst({
-      where: { role: "ADMIN" },
+      where: { role: "SUPER_ADMIN" },
     });
 
     if (!existingAdmin) {
