@@ -5,7 +5,7 @@ import { ServiceTypeController } from "./serviceType.controller";
 
 const router = Router();
 
-router.post("/create", auth("ADMIN"), ServiceTypeController.createServiceType);
+router.post("/create", auth("ADMIN","SUPER_ADMIN"), ServiceTypeController.createServiceType);
 
 router.get("/", ServiceTypeController.getAllServiceType);
 router.get(
@@ -16,12 +16,12 @@ router.get(
 router.get("/:id", ServiceTypeController.getSingleServiceType);
 router.delete(
   "/delete/:id",
-  auth("ADMIN"),
+  auth("ADMIN","SUPER_ADMIN"),
   ServiceTypeController.deleteServiceType,
 );
 router.patch(
   "/update/:id",
-  auth("ADMIN"),
+  auth("ADMIN","SUPER_ADMIN"),
   ServiceTypeController.updateServiceType,
 );
 

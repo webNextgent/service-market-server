@@ -6,7 +6,7 @@ const router = Router();
 
 router.post(
   "/create",
-  auth("ADMIN"),
+auth("ADMIN","SUPER_ADMIN"),
 
   PromoCodeController.createPromoCode,
 );
@@ -15,13 +15,13 @@ router.get("/", auth("ADMIN"), PromoCodeController.getAllPromoCode);
 
 router.post(
   "/use-promo-code/:id",
-  auth("ADMIN", "USER"),
+  auth("USER", "ADMIN","SUPER_ADMIN"),
   PromoCodeController.usePromoCodeByUser,
 );
 
 router.delete(
   "/delete/:id",
-  auth("ADMIN"),
+  auth("ADMIN","SUPER_ADMIN"),
   PromoCodeController.deletePromoCode,
 );
 

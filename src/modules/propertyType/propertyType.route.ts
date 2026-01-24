@@ -7,19 +7,19 @@ const router = Router();
 
 router.post(
   "/create",
-  auth("ADMIN"),
+  auth("ADMIN","SUPER_ADMIN"),
   PropertyTypeController.createPropertyType,
 );
 
 router.get("/", PropertyTypeController.getAllPropertyType);
 router.delete(
   "/delete/:id",
-  auth("ADMIN"),
+  auth("ADMIN","SUPER_ADMIN"),
   PropertyTypeController.deletePropertyType,
 );
 router.patch(
   "/update/:id",
-  auth("ADMIN"),
+  auth("ADMIN","SUPER_ADMIN"),
   PropertyTypeController.updatePropertyType,
 );
 

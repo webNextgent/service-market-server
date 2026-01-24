@@ -6,23 +6,23 @@ const router = Router();
 
 router.post("/create", BookingController.createBooking);
 
-router.get("/", auth("ADMIN"), BookingController.getAllBooking);
+router.get("/", auth("ADMIN","SUPER_ADMIN"), BookingController.getAllBooking);
 
 router.get("/my-booking", auth("USER"), BookingController.getAllMYBooking);
-router.get("/:id", auth("USER", "ADMIN"), BookingController.getSingleBooking);
+router.get("/:id", auth("USER", "ADMIN","SUPER_ADMIN"), BookingController.getSingleBooking);
 router.patch(
   "/update/:id",
-  auth("USER", "ADMIN"),
+  auth("USER", "ADMIN","SUPER_ADMIN"),
   BookingController.updateBooking,
 );
 router.patch(
   "/userBooking/:id",
-  auth("USER", "ADMIN"),
+  auth("USER", "ADMIN","SUPER_ADMIN"),
   BookingController.updateUserBooking,
 );
 router.delete(
   "/delete/:id",
-  auth("USER", "ADMIN"),
+  auth("USER", "ADMIN","SUPER_ADMIN"),
   BookingController.deleteBooking,
 );
 

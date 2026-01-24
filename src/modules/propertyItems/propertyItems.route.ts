@@ -6,7 +6,7 @@ const router = Router();
 
 router.post(
   "/create",
-  auth("ADMIN"),
+ auth("ADMIN","SUPER_ADMIN"),
 
   PropertyItemsController.createPropertyItems,
 );
@@ -15,12 +15,12 @@ router.get("/", PropertyItemsController.getAllPropertyItems);
 router.get("/:id", PropertyItemsController.getSinglePropertyItems);
 router.delete(
   "/delete/:id",
-  auth("ADMIN"),
+  auth("ADMIN","SUPER_ADMIN"),
   PropertyItemsController.deletePropertyItems,
 );
 router.patch(
   "/update/:id",
-  auth("ADMIN"),
+  auth("ADMIN","SUPER_ADMIN"),
   PropertyItemsController.updatePropertyItems,
 );
 

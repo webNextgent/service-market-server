@@ -5,11 +5,23 @@ import { DateTimeController } from "./dateTime.controller";
 
 const router = Router();
 
-router.post("/create", auth("ADMIN"), DateTimeController.createDateTime);
+router.post(
+  "/create",
+  auth("ADMIN", "SUPER_ADMIN"),
+  DateTimeController.createDateTime,
+);
 
 router.get("/", DateTimeController.getAllDateTime);
 // router.get("/:id", DateTimeController.getSingleDateTime);
-router.delete("/delete/:id", auth("ADMIN"), DateTimeController.deleteDateTime);
-router.patch("/update/:id", auth("ADMIN"), DateTimeController.updateDateTime);
+router.delete(
+  "/delete/:id",
+  auth("ADMIN", "SUPER_ADMIN"),
+  DateTimeController.deleteDateTime,
+);
+router.patch(
+  "/update/:id",
+  auth("ADMIN", "SUPER_ADMIN"),
+  DateTimeController.updateDateTime,
+);
 
 export const DateTimeRoutes = router;

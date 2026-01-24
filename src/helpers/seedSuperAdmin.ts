@@ -12,7 +12,7 @@ export const seedSuperAdmin = async (prisma: PrismaClient) => {
       await prisma.user.create({
         data: {
           phone:"+8801826853371",
-          role: "ADMIN",
+          role: "SUPER_ADMIN",
         },
       });
       console.log("Super Admin created!");
