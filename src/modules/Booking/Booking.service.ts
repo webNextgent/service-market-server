@@ -29,10 +29,8 @@ const createBooking = async (data: any) => {
   };
 
   const formattedDate = formatDate(data.date);
-  const timeRange = data.time; // "12:00 AM - 12:15 AM"
+  const timeRange = data.time; 
 
-
-  // 👉 1. Transaction only for DB work
   const booking = await prisma.$transaction(async (tx) => {
     const booking = await tx.booking.create({
       data: {
@@ -52,7 +50,6 @@ const createBooking = async (data: any) => {
     return booking;
   });
 
-  // 👉 2. Email send (after booking success)
   const emailTemplate = bookingConfirmationTemplate({
     customerName: `${findUser.firstName} ${findUser.lastName}`,
     serviceDate: formattedDate,
