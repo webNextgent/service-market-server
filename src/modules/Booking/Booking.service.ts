@@ -5,7 +5,7 @@ import { bookingConfirmationTemplate } from "../../utils/sendEmailTemplete";
 
 const prisma = new PrismaClient();
 
-
+ 
 const createBooking = async (data: any) => {
   const { propertyItemIds, ...bookingData } = data;
 

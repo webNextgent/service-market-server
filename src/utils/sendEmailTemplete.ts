@@ -10,7 +10,7 @@ export const bookingConfirmationTemplate = (data: {
   vatAmount: number;
   totalAmount: number;
 }) => {
-  const subject = `Your booking request has been received - Reference: ${data.referenceId}`;
+  const subject = `Your booking request has been received`;
 
   const html = `
 <!DOCTYPE html>
