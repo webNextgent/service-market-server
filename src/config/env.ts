@@ -20,6 +20,8 @@ interface EnvVars {
   MYRC_API_KEY:string
   MYRC_SENDER:string
   MYRC_API_URL:string
+  EMAIL:string
+  PASSWORD:string
 
 
 }
@@ -43,6 +45,8 @@ const loadEnvVariables = (): EnvVars => {
     "MYRC_API_KEY",
     "MYRC_SENDER",
     "MYRC_API_URL",
+    "EMAIL",
+    "PASSWORD",
     
   ];
   requiredVars.forEach((key) => {
@@ -70,6 +74,8 @@ const loadEnvVariables = (): EnvVars => {
     MYRC_API_KEY: process.env.MYRC_API_KEY as string,
     MYRC_SENDER: process.env.MYRC_SENDER as string,
     MYRC_API_URL: process.env.MYRC_API_URL as string,
+    EMAIL: process.env.EMAIL as string,
+    PASSWORD: process.env.PASSWORD as string,
     
   };
 };
